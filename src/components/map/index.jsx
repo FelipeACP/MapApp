@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 
+const colors = ['https://i.imgur.com/NsQQAix.png', 'https://i.imgur.com/5cB7OUv.png', 'https://i.imgur.com/iBtUyCa.png', 'https://i.imgur.com/FwyXica.png', 'https://i.imgur.com/3bXECRM.png', 'https://i.imgur.com/6IF42VT.png', 'https://i.imgur.com/2qYxhkf.png', 'https://i.imgur.com/9JRtUiL.png', 'https://i.imgur.com/6e50x9Y.png', 'https://i.imgur.com/zTW0MaD.png', 'https://i.imgur.com/2xiKuH6.png', 'https://i.imgur.com/nltkFOq.png', 'https://i.imgur.com/cUGYRvC.png', 'https://i.imgur.com/ipbn3SR.png', 'https://i.imgur.com/KVUb4l7.png', 'https://i.imgur.com/ABY52gh.png', 'https://i.imgur.com/auR5Z0M.png', 'https://i.imgur.com/8q3VqKE.png', 'https://i.imgur.com/gLTEbzv.png', 'https://i.imgur.com/Ll1k7wz.png'] //markers colors for categories
+
 class GoogleMap extends Component {
   constructor(props) {
     super(props);
@@ -26,9 +28,9 @@ class GoogleMap extends Component {
           let locationString = `${results[0].geometry.location}`;
           let lat = Number(locationString.substring(1, locationString.indexOf(',')));
           let lng = Number(locationString.substring(locationString.indexOf(',') + 2, locationString.length - 1));
-          let newLoc = { lat: lat, lng: lng };
+          let newLoc = { lat: lat, lng: lng, category: addresses[i].category };
           coordinates.push(newLoc);
-          console.log(coordinates);
+          console.log(coordinates); //this keeps logging in the console
           if (i + 1 === addresses.length && coordinates !== this.state.coordinates) {
             this.setState({ coordinates: coordinates });
           }
@@ -40,20 +42,26 @@ class GoogleMap extends Component {
   };
 
   displayMarkers = () => {
-    console.log('markers are running');
-    return this.state.coordinates.map((address, index) => {
-      return (
-        <Marker
-          key={index}
-          id={index}
-          position={{
-            lat: address.lat,
-            lng: address.lng,
-          }}
-          onClick={() => console.log('You clicked me!')}
-        />
-      );
-    });
+    console.log('markers are running'); //this keeps logging in the console too
+    let locationsWithCategories = this.state.coordinates.groupDynamically('category');
+    Object.keys(locationsWithCategories).map((key, index) => {
+        locationsWithCategories[key].map((obj) => {
+            console.log(obj.lat, obj.lng, colors[index]) //I'm getting good values but markers don't show on the map for some reason
+            return (
+                <Marker
+                  key={index}
+                  id={index}
+                  position={{
+                    lat: obj.lat,
+                    lng: obj.lng,
+                  }}
+                  icon={colors[index]}
+                  onClick={() => console.log('You clicked me!')}
+                />
+              );
+            
+        })
+    })
   };
 
   setMapBounds = () => {
@@ -70,7 +78,7 @@ class GoogleMap extends Component {
         <Map
           google={this.props.google}
           zoom={8}
-          initialCenter={{ lat: 47.444, lng: -122.176 }}
+          initialCenter={{ lat: 47.444, lng: -122.176 }} //Those initials will be current user location later
           bounds={this.setMapBounds()}
         >
           {this.state.coordinates.length > 0 && this.displayMarkers()}
@@ -89,3 +97,14 @@ export default connect(mapStateToProps)(
     apiKey: process.env.REACT_APP_GOOGLE_API_KEY,
   })(GoogleMap),
 );
+
+//I've got this code from stack overflow, works nice but I'm not sure if it's the best solution
+// eslint-disable-next-line no-extend-native
+Array.prototype.groupDynamically = function(prop) {
+    return this.reduce(function(groups, item) {
+      var val = item[prop];
+      groups[val] = groups[val] || [];
+      groups[val].push(item);
+      return groups;
+    }, {});
+  }
