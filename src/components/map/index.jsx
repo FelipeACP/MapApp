@@ -4,6 +4,7 @@ import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 
 const colors = ['https://i.imgur.com/NsQQAix.png', 'https://i.imgur.com/5cB7OUv.png', 'https://i.imgur.com/iBtUyCa.png', 'https://i.imgur.com/FwyXica.png', 'https://i.imgur.com/3bXECRM.png', 'https://i.imgur.com/6IF42VT.png', 'https://i.imgur.com/2qYxhkf.png', 'https://i.imgur.com/9JRtUiL.png', 'https://i.imgur.com/6e50x9Y.png', 'https://i.imgur.com/zTW0MaD.png', 'https://i.imgur.com/2xiKuH6.png', 'https://i.imgur.com/nltkFOq.png', 'https://i.imgur.com/cUGYRvC.png', 'https://i.imgur.com/ipbn3SR.png', 'https://i.imgur.com/KVUb4l7.png', 'https://i.imgur.com/ABY52gh.png', 'https://i.imgur.com/auR5Z0M.png', 'https://i.imgur.com/8q3VqKE.png', 'https://i.imgur.com/gLTEbzv.png', 'https://i.imgur.com/Ll1k7wz.png'] //markers colors for categories
 
+
 class GoogleMap extends Component {
   constructor(props) {
     super(props);
@@ -13,8 +14,9 @@ class GoogleMap extends Component {
     };
   }
 
-  componentDidUpdate() {
-    this.getLatLong();
+  componentDidUpdate(prevProps) {
+    if(this.props.addresses !== prevProps.addresses)
+      this.getLatLong();
   }
 
   getLatLong = () => {
@@ -44,17 +46,13 @@ class GoogleMap extends Component {
   displayMarkers = () => {
     console.log('markers are running'); //this keeps logging in the console too
     let locationsWithCategories = this.state.coordinates.groupDynamically('category');
-    Object.keys(locationsWithCategories).map((key, index) => {
-        locationsWithCategories[key].map((obj) => {
-            console.log(obj.lat, obj.lng, colors[index]) //I'm getting good values but markers don't show on the map for some reason
+    return Object.keys(locationsWithCategories).map((key, index) => {
+        return locationsWithCategories[key].map(({ category , ...obj}) => {
             return (
                 <Marker
                   key={index}
                   id={index}
-                  position={{
-                    lat: obj.lat,
-                    lng: obj.lng,
-                  }}
+                  position={obj}
                   icon={colors[index]}
                   onClick={() => console.log('You clicked me!')}
                 />
