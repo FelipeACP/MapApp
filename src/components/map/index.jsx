@@ -4,7 +4,7 @@ import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 
 //marker colors for categories
 const colors = [
-  'https://i.imgur.com/NsQQAix.png', 'https://i.imgur.com/5cB7OUv.png', 'https://i.imgur.com/iBtUyCa.png',  'https://i.imgur.com/FwyXica.png', 'https://i.imgur.com/3bXECRM.png', 'https://i.imgur.com/6IF42VT.png', 'https://i.imgur.com/2qYxhkf.png', 'https://i.imgur.com/9JRtUiL.png', 'https://i.imgur.com/6e50x9Y.png', 'https://i.imgur.com/zTW0MaD.png', 'https://i.imgur.com/2xiKuH6.png', 'https://i.imgur.com/nltkFOq.png', 'https://i.imgur.com/cUGYRvC.png', 'https://i.imgur.com/ipbn3SR.png', 'https://i.imgur.com/KVUb4l7.png', 'https://i.imgur.com/ABY52gh.png', 'https://i.imgur.com/auR5Z0M.png', 'https://i.imgur.com/8q3VqKE.png', 'https://i.imgur.com/gLTEbzv.png', 'https://i.imgur.com/Ll1k7wz.png',
+  'https://i.imgur.com/NsQQAix.png', 'https://i.imgur.com/5cB7OUv.png', 'https://i.imgur.com/iBtUyCa.png', 'https://i.imgur.com/FwyXica.png', 'https://i.imgur.com/3bXECRM.png', 'https://i.imgur.com/6IF42VT.png', 'https://i.imgur.com/2qYxhkf.png', 'https://i.imgur.com/9JRtUiL.png', 'https://i.imgur.com/6e50x9Y.png', 'https://i.imgur.com/zTW0MaD.png', 'https://i.imgur.com/2xiKuH6.png', 'https://i.imgur.com/nltkFOq.png', 'https://i.imgur.com/cUGYRvC.png', 'https://i.imgur.com/ipbn3SR.png', 'https://i.imgur.com/KVUb4l7.png', 'https://i.imgur.com/ABY52gh.png', 'https://i.imgur.com/auR5Z0M.png', 'https://i.imgur.com/8q3VqKE.png', 'https://i.imgur.com/gLTEbzv.png', 'https://i.imgur.com/Ll1k7wz.png',
 ];
 
 class GoogleMap extends Component {
@@ -26,28 +26,38 @@ class GoogleMap extends Component {
     if (this.props.addresses !== prevProps.addresses) this.getLatLong();
   }
 
-  getLatLong = () => {
+  geocode = (address) => new Promise((resolve, reject) => {
+    const geocoder = new this.props.google.maps.Geocoder();
+    geocoder.geocode({ address: address }, (results, status) => {
+      if (status === 'OK') {
+        let locationString = `${results[0].geometry.location}`;
+        let lat = Number(locationString.substring(1, locationString.indexOf(',')));
+        let lng = Number(locationString.substring(locationString.indexOf(',') + 2, locationString.length - 1));
+        let newLoc = { lat: lat, lng: lng, address: address };
+        resolve(newLoc)
+      } else {
+        reject('One or more of your addresses were invalid.')
+      }
+    })
+  })
+
+
+  getLatLong = async () => {
     const addresses = this.props.addresses;
     const coordinates = [];
-    const geocoder = new this.props.google.maps.Geocoder();
     for (let i = 0; i < addresses.length; i++) {
       let address = `${addresses[i].state ? addresses[i].state + ' ' : ''}${addresses[i].city ? addresses[i].city + ' ' : ''}${addresses[i].zip ? addresses[i].zip + ' ' : ''}${addresses[i].address ? addresses[i].address : ''}`;
-      geocoder.geocode({ address: address }, (results, status) => {
-        if (status === 'OK') {
-          let locationString = `${results[0].geometry.location}`;
-          let lat = Number(locationString.substring(1, locationString.indexOf(',')));
-          let lng = Number(locationString.substring(locationString.indexOf(',') + 2, locationString.length - 1));
-          let newLoc = { lat: lat, lng: lng, category: addresses[i].category, address: address };
-          coordinates.push(newLoc);
-          if (i + 1 === addresses.length && coordinates !== this.state.coordinates) {
-            this.setState({ coordinates: coordinates });
-          }
-        } else {
-          this.setState({ addressError: 'One or more of your addresses were invalid.' });
-        }
-      });
-    }
-  };
+      try {
+        let newLoc = await this.geocode(address)
+        coordinates.push(newLoc)
+      } catch (addressError) {
+        this.setState({ addressError })
+        console.error(addressError)
+      }
+    };
+    console.log(coordinates)
+    this.setState({ coordinates })
+  }
 
   displayMarkers = () => {
     let locationsWithCategories = this.state.coordinates.groupDynamically('category');
