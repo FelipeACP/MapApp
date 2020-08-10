@@ -1,0 +1,23 @@
+//marker colors for categories
+export const colors = [
+  'https://i.imgur.com/NsQQAix.png',
+  'https://i.imgur.com/5cB7OUv.png',
+  'https://i.imgur.com/iBtUyCa.png',
+  'https://i.imgur.com/FwyXica.png',
+  'https://i.imgur.com/3bXECRM.png',
+  'https://i.imgur.com/6IF42VT.png',
+  'https://i.imgur.com/2qYxhkf.png',
+  'https://i.imgur.com/9JRtUiL.png',
+  'https://i.imgur.com/6e50x9Y.png',
+  'https://i.imgur.com/zTW0MaD.png',
+  'https://i.imgur.com/2xiKuH6.png',
+  'https://i.imgur.com/nltkFOq.png',
+  'https://i.imgur.com/cUGYRvC.png',
+  'https://i.imgur.com/ipbn3SR.png',
+  'https://i.imgur.com/KVUb4l7.png',
+  'https://i.imgur.com/ABY52gh.png',
+  'https://i.imgur.com/auR5Z0M.png',
+  'https://i.imgur.com/8q3VqKE.png',
+  'https://i.imgur.com/gLTEbzv.png',
+  'https://i.imgur.com/Ll1k7wz.png',
+];
