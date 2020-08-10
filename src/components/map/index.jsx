@@ -49,13 +49,12 @@ class GoogleMap extends Component {
       let address = `${addresses[i].state ? addresses[i].state + ' ' : ''}${addresses[i].city ? addresses[i].city + ' ' : ''}${addresses[i].zip ? addresses[i].zip + ' ' : ''}${addresses[i].address ? addresses[i].address : ''}`;
       try {
         let newLoc = await this.geocode(address)
-        coordinates.push(newLoc)
+        coordinates.push({...newLoc, category: addresses[i].category})
       } catch (addressError) {
         this.setState({ addressError })
         console.error(addressError)
       }
     };
-    console.log(coordinates)
     this.setState({ coordinates })
   }
 
