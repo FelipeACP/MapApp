@@ -16,14 +16,16 @@ class FileReader extends Component {
   };
 
   importCSV = () => {
-    if (this.state.csvFile.type === 'application/vnd.ms-excel') this.props.fetchAddress(this.state.csvFile);
-    else return alert('The type of your file is not CSV. Please try again.');
+    let fileName = this.state.csvFile.name;
+    if (fileName.substring(fileName.length - 4, fileName.length) === '.csv')
+      this.props.fetchAddress(this.state.csvFile);
+    else return alert('The type of your file is not CSV. Please try again with another file.');
   };
 
   render() {
     return (
-      <div className="App">
-        <h2>Import CSV File!</h2>
+      <div className="importDiv">
+        <h3>Import your CSV File</h3>
         <input
           className="csv-input"
           type="file"
@@ -34,8 +36,11 @@ class FileReader extends Component {
           placeholder={null}
           onChange={this.handleChange}
         />
-        <p />
-        {this.state.csvFile !== undefined && <button onClick={this.importCSV}> Upload now!</button>}
+        {this.state.csvFile !== undefined && (
+          <button className="uploadButton" onClick={this.importCSV}>
+            Upload now!
+          </button>
+        )}
       </div>
     );
   }

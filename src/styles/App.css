@@ -1,0 +1,78 @@
+.App {
+  text-align: center;
+  text-align: -webkit-center;
+  text-align: -moz-center;
+}
+
+.logo {
+  font-family: cursive;
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: xx-large;
+  color: #47caec;
+  text-shadow: 3px 3px #03060b;
+}
+
+button,
+input {
+  box-shadow: 3px 4px 0px 0px #1564ad;
+  background: linear-gradient(to bottom, #79bbff 5%, #378de5 100%);
+  background-color: #79bbff;
+  border-radius: 5px;
+  border: 1px solid #337bc4;
+  display: inline-block;
+  cursor: pointer;
+  color: #ffffff;
+  font-family: Arial;
+  font-weight: bold;
+  padding: 1em 2em;
+  margin: 1em;
+  text-decoration: none;
+  text-shadow: 0px 1px 0px #528ecc;
+}
+
+.btn {
+  box-shadow: 3px 4px 0px 0px #1564ad;
+  background: linear-gradient(to bottom, #79bbff 5%, #378de5 100%);
+  background-color: #79bbff;
+  border: 1px solid #337bc4;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: small;
+}
+
+button:hover {
+  background: linear-gradient(to bottom, #378de5 5%, #79bbff 100%);
+  background-color: #378de5;
+}
+
+button:active {
+  position: relative;
+  top: 1px;
+}
+
+.importDiv {
+  color: #47caec;
+  text-shadow: 3px 3px #03060b;
+}
+
+.errorDiv {
+  color: #47caec;
+  text-shadow: 3px 3px #03060b;
+  font-weight: 700;
+  font-size: medium;
+}
+
+@media all and (min-width: 600px) {
+  .instructionDiv {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+  }
+}
+
+@media all and (max-width: 650px) {
+  .instructionImg {
+    width: 90vw;
+  }
+}

@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
+import { colors } from '../../utils/markerColors';
 
-//marker colors for categories
-const colors = [
-  'https://i.imgur.com/NsQQAix.png', 'https://i.imgur.com/5cB7OUv.png', 'https://i.imgur.com/iBtUyCa.png', 'https://i.imgur.com/FwyXica.png', 'https://i.imgur.com/3bXECRM.png', 'https://i.imgur.com/6IF42VT.png', 'https://i.imgur.com/2qYxhkf.png', 'https://i.imgur.com/9JRtUiL.png', 'https://i.imgur.com/6e50x9Y.png', 'https://i.imgur.com/zTW0MaD.png', 'https://i.imgur.com/2xiKuH6.png', 'https://i.imgur.com/nltkFOq.png', 'https://i.imgur.com/cUGYRvC.png', 'https://i.imgur.com/ipbn3SR.png', 'https://i.imgur.com/KVUb4l7.png', 'https://i.imgur.com/ABY52gh.png', 'https://i.imgur.com/auR5Z0M.png', 'https://i.imgur.com/8q3VqKE.png', 'https://i.imgur.com/gLTEbzv.png', 'https://i.imgur.com/Ll1k7wz.png',
-];
+const style = {
+  width: '80%',
+  height: '70%',
+  margin: '2vh 10vw',
+};
 
 class GoogleMap extends Component {
   constructor(props) {
@@ -26,37 +28,41 @@ class GoogleMap extends Component {
     if (this.props.addresses !== prevProps.addresses) this.getLatLong();
   }
 
-  geocode = (address) => new Promise((resolve, reject) => {
-    const geocoder = new this.props.google.maps.Geocoder();
-    geocoder.geocode({ address: address }, (results, status) => {
-      if (status === 'OK') {
-        let locationString = `${results[0].geometry.location}`;
-        let lat = Number(locationString.substring(1, locationString.indexOf(',')));
-        let lng = Number(locationString.substring(locationString.indexOf(',') + 2, locationString.length - 1));
-        let newLoc = { lat: lat, lng: lng, address: address };
-        resolve(newLoc)
-      } else {
-        reject('One or more of your addresses were invalid.')
-      }
-    })
-  })
 
+  geocode = (address) =>
+    new Promise((resolve, reject) => {
+      const geocoder = new this.props.google.maps.Geocoder();
+      geocoder.geocode({ address: address }, (results, status) => {
+        if (status === 'OK') {
+          let locationString = `${results[0].geometry.location}`;
+          let lat = Number(locationString.substring(1, locationString.indexOf(',')));
+          let lng = Number(locationString.substring(locationString.indexOf(',') + 2, locationString.length - 1));
+          let newLoc = { lat: lat, lng: lng, address: address };
+          resolve(newLoc);
+        } else {
+          reject('One or more of your addresses were invalid.');
+        }
+      });
+    });
 
   getLatLong = async () => {
     const addresses = this.props.addresses;
     const coordinates = [];
     for (let i = 0; i < addresses.length; i++) {
-      let address = `${addresses[i].state ? addresses[i].state + ' ' : ''}${addresses[i].city ? addresses[i].city + ' ' : ''}${addresses[i].zip ? addresses[i].zip + ' ' : ''}${addresses[i].address ? addresses[i].address : ''}`;
+
+      let address = `${addresses[i].state ? addresses[i].state + ' ' : ''}${
+        addresses[i].city ? addresses[i].city + ' ' : ''
+      }${addresses[i].zip ? addresses[i].zip + ' ' : ''}${addresses[i].address ? addresses[i].address : ''}`;
       try {
-        let newLoc = await this.geocode(address)
-        coordinates.push({...newLoc, category: addresses[i].category})
+        let newLoc = await this.geocode(address);
+        coordinates.push({ ...newLoc, category: addresses[i].category });
       } catch (addressError) {
-        this.setState({ addressError })
-        console.error(addressError)
+        this.setState({ addressError });
+        console.error(addressError);
       }
-    };
-    this.setState({ coordinates })
-  }
+    }
+    this.setState({ coordinates });
+  };
 
   displayMarkers = () => {
     let locationsWithCategories = this.state.coordinates.groupDynamically('category');
@@ -109,11 +115,12 @@ class GoogleMap extends Component {
 
   render() {
     return (
-      <>
-        {this.state.addressError !== undefined && <div>{this.state.addressError}</div>}
+      <div className="mapDiv">
+        {this.state.addressError !== undefined && <div className="errorDiv">{this.state.addressError}</div>}
         <Map
           google={this.props.google}
-          zoom={8}
+          style={style}
+          zoom={7}
           onClick={this.onMapClicked}
           initialCenter={{ lat: 51.107883, lng: 17.038538 }}
           bounds={this.setMapBounds()}
@@ -125,12 +132,12 @@ class GoogleMap extends Component {
             visible={this.state.showingInfoWindow}
           >
             <div>
-              <h1>{this.state.markerCat}</h1>
-              <h3>{this.state.markerAddress}</h3>
+              <h4>{this.state.markerCat}</h4>
+              <h5>{this.state.markerAddress}</h5>
             </div>
           </InfoWindow>
         </Map>
-      </>
+      </div>
     );
   }
 }

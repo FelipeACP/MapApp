@@ -4,6 +4,10 @@ body {
     'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: url(https://eskipaper.com/images/world-map-wallpaper-8.jpg);
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: auto;
 }
 
 code {
